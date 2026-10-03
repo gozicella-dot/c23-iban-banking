@@ -1,1 +1,24 @@
+[build]
+  publish = "frontend"
+  command = "echo 'Frontend static site'"
 
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+[functions]
+  directory = "frontend"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type, Authorization"
+
+[env.production]
+  BACKEND_URL = "https://c23-iban-api.onrender.com"
+
+[env.development]
+  BACKEND_URL = "http://localhost:3000"
