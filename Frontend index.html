@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C23 Bank - IBAN Banking Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            font-size: 48px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .tab-button {
+            padding: 15px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #999;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab-button.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .iban-display {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .iban-label {
+            color: #999;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .iban-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            font-family: 'Courier New', monospace;
+        }
+
+        .account-card {
+            background: #f8f9ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .account-card-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .account-card-value {
+            color: #667eea;
+            font-size: 14px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .message {
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🏦 C23 Bank</div>
+            <div class="tagline">Plateforme bancaire IBAN moderne</div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="switchTab('register')">Inscription</button>
+            <button class="tab-button" onclick="switchTab('iban')">Générer IBAN</button>
+            <button class="tab-button" onclick="switchTab('accounts')">Mes Comptes</button>
+            <button class="tab-button" onclick="switchTab('history')">Historique</button>
+        </div>
+
+        <!-- Tab: Inscription -->
+        <div id="register" class="tab-content active">
+            <h3 style="margin-bottom: 20px; color: #333;">Créer un compte</h3>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="email" placeholder="votre@email.com">
+            </div>
+            <div class="form-group">
+                <label>Mot de passe</label>
+                <input type="password" id="password" placeholder="••••••••">
+            </div>
+            <div class="form-group">
+                <label>Prénom</label>
+                <input type="text" id="firstName" placeholder="Jean">
+            </div>
+            <div class="form-group">
+                <label>Nom</label>
+                <input type="text" id="lastName" placeholder="Dupont">
+            </div>
+            <div class="form-group">
+                <label>Pays</label>
+                <select id="country">
+                    <option>Sélectionnez un pays</option>
+                    <option value="FR">France</option>
+                    <option value="DE">Allemagne</option>
+                    <option value="IT">Italie</option>
+                    <option value="ES">Espagne</option>
+                    <option value="BE">Belgique</option>
+                    <option value="CH">Suisse</option>
+                </select>
+            </div>
+            <button class="btn" onclick="registerUser()">S'inscrire</button>
+            <div id="registerMessage" class="message"></div>
+        </div>
+
+        <!-- Tab: Générer IBAN -->
+        <div id="iban" class="tab-content">
+            <h3 style="margin-bottom: 20px; color: #333;">Générer un IBAN</h3>
+            <div class="form-group">
+                <label>Numéro de compte</label>
+                <input type="text" id="accountNumber" placeholder="12345678">
+            </div>
+            <div class="form-group">
+                <label>Pays</label>
+                <select id="ibanCountry">
+                    <option>Sélectionnez un pays</option>
+                    <option value="FR">France</option>
+                    <option value="DE">Allemagne</option>
+                    <option value="IT">Italie</option>
+                    <option value="ES">Espagne</option>
+                </select>
+            </div>
+            <button class="btn" onclick="generateIBAN()">Générer IBAN</button>
+            <div id="ibanMessage" class="message"></div>
+            <div id="ibanDisplay" class="iban-display" style="display: none;">
+                <div class="iban-label">Votre IBAN</div>
+                <div class="iban-value" id="ibanValue">FR1420041010050500013M02606</div>
+            </div>
+        </div>
+
+        <!-- Tab: Mes Comptes -->
+        <div id="accounts" class="tab-content">
+            <h3 style="margin-bottom: 20px; color: #333;">Mes Comptes</h3>
+            <div id="accountsList">
+                <p style="color: #999; text-align: center;">Aucun compte créé</p>
+            </div>
+        </div>
+
+        <!-- Tab: Historique -->
+        <div id="history" class="tab-content">
+            <h3 style="margin-bottom: 20px; color: #333;">Historique</h3>
+            <div id="transactionsList">
+                <p style="color: #999; text-align: center;">Aucune transaction</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://c23-iban-api.onrender.com';
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        async function registerUser() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const country = document.getElementById('country').value;
+
+            if (!email || !password || !firstName || !lastName || !country) {
+                showMessage('registerMessage', 'Veuillez remplir tous les champs', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password, firstName, lastName, country })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    showMessage('registerMessage', 'Inscription réussie !', 'success');
+                    localStorage.setItem('userId', data.userId);
+                } else {
+                    showMessage('registerMessage', data.message || 'Erreur', 'error');
+                }
+            } catch (error) {
+                showMessage('registerMessage', 'Erreur: ' + error.message, 'error');
+            }
+        }
+
+        async function generateIBAN() {
+            const accountNumber = document.getElementById('accountNumber').value;
+            const country = document.getElementById('ibanCountry').value;
+
+            if (!accountNumber || !country) {
+                showMessage('ibanMessage', 'Veuillez remplir tous les champs', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/iban/generate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ accountNumber, country })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    document.getElementById('ibanValue').textContent = data.iban;
+                    document.getElementById('ibanDisplay').style.display = 'block';
+                    showMessage('ibanMessage', 'IBAN généré !', 'success');
+                } else {
+                    showMessage('ibanMessage', data.message || 'Erreur', 'error');
+                }
+            } catch (error) {
+                showMessage('ibanMessage', 'Erreur: ' + error.message, 'error');
+            }
+        }
+
+        function showMessage(elementId, text, type) {
+            const element = document.getElementById(elementId);
+            element.textContent = text;
+            element.className = `message ${type}`;
+        }
+    </script>
+</body>
+                    </html>
